@@ -1,0 +1,14 @@
+---
+import type { LottieAnimationConfig } from "./dist/index";
+
+export interface Props extends LottieAnimationConfig {}
+
+const { src, autoplay, loop } = Astro.props;
+const lottieData = {
+    src,
+    autoplay,
+    loop,
+};
+---
+
+<div data-lottie data-lottie-data={JSON.stringify(lottieData)}></div>
