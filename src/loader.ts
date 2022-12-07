@@ -1,3 +1,5 @@
+import type { AnimationItem } from "lottie-web";
+
 export interface LottieAnimationConfig {
     src: string
     player?: "light" | "full"
@@ -45,10 +47,10 @@ requestAnimationFrame(async () => {
     (window as any).lottie = lottie;
 
     // load animations
-    const animationData = (await Promise.all(
+    const animationDataMap = new Map((await Promise.all(
         [...new Set(containers.map(([_, config]) => config.src))].map(async src => {
             const response = await fetch(src).catch(() => { });
-            if (!response) {
+            if (!response || response.status >= 400) {
                 console.warn("Cannot load animation(%s)", src);
                 return;
             }
@@ -61,23 +63,26 @@ requestAnimationFrame(async () => {
 
             return [src, data] as const;
         })
-    )) as [string, any][];
+    )).filter(x => !!x) as [string, any][]);
 
 
     const animations = containers.map(([container, config]) => {
+        const animationData = animationDataMap.get(config.src);
+        if (!animationData) return;
+
         const { loop, autoplay } = config;
         const player = lottie.loadAnimation({
             container,
             loop,
             autoplay: autoplay === "visible" ? false : autoplay,
-            animationData: animationData.find(([src]) => src === config.src)![1],
+            animationData,
             rendererSettings: {
                 viewBoxOnly: true,
             },
         });
 
         return [container, config, player] as const;
-    });
+    }).filter(x => !!x) as [HTMLElement, LottieAnimationConfig, AnimationItem][];
 
     const toObserve = animations.filter(([, config]) => config.autoplay === "visible");
     if (toObserve.length === 0) {
