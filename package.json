@@ -31,10 +31,10 @@
     "Lottie.astro"
   ],
   "devDependencies": {
-    "@types/node": "^16.18.6",
-    "astro": "^1.6.13",
-    "lottie-web": "^5.10.0",
-    "typescript": "^4.9.3"
+    "@types/node": "^16.18.12",
+    "astro": "^1.9.2",
+    "lottie-web": "^5.10.2",
+    "typescript": "^4.9.5"
   },
   "peerDependencies": {
     "lottie-web": "^5.10.0"
