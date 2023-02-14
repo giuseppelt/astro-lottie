@@ -72,8 +72,8 @@ if (!astroLottie) {
   // - no lottie animation is present on this page
   // - lottie library failed to load  
 } else {
-  const player = astroLottie.getAnimation("my-animation");
-  player.play();
+  const animation = astroLottie.getAnimation("my-animation");
+  animation.player.play();
 }
 ```
 
