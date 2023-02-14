@@ -135,6 +135,15 @@ In typescript, you can have full type info of the `astroLottie` object with an e
 /// <reference types="astro-integration-lottie/env" />
 ```
 
+### Animation ready event
+The loader emit a document event `astro-lottie-loaded` when all animations are loaded and ready. The `details` property of the event, is the `astroLottie` global object.
+
+```ts
+document.addEventListener("astro-lottie-loaded", e => {
+  const astroLottie = e.details;
+  const animations = astroLottie.getAllAnimations();
+});
+```
 
 ## Reference
 ### LottieAnimationConfig --> the Lottie component Props

@@ -124,4 +124,9 @@ requestAnimationFrame(async () => {
             throw new Error("Invalid LottieAnimation source: " + key)
         },
     };
+
+    // raise custom ready event
+    document.dispatchEvent(new CustomEvent("astro-lottie-loaded", {
+        detail: window.astroLottie!
+    }));
 });
