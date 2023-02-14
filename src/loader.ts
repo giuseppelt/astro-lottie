@@ -2,7 +2,7 @@ import type { AnimationItem } from "lottie-web";
 import type { LottieAnimation, LottieAnimationConfig } from "./types";
 
 
-requestAnimationFrame(async () => {
+setTimeout(async () => {
 
     const DEFAULT: Partial<LottieAnimationConfig> = {
         player: "light",
@@ -129,4 +129,4 @@ requestAnimationFrame(async () => {
     document.dispatchEvent(new CustomEvent("astro-lottie-loaded", {
         detail: window.astroLottie!
     }));
-});
+}, 0);
