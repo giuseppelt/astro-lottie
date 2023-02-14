@@ -1,5 +1,9 @@
 # astro-lottie changelog
 
+## 0.2.0 Feature release
+feat: exposed a global object to interact with loaded animations
+feat: raise a loaded event when all animations are loaded and ready
+
 ## 0.1.1 Patch release
 fix: don't crash when an animation cannot be fetched
 
