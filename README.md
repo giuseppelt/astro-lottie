@@ -60,12 +60,87 @@ The loader will
 - download the animations (if one is used multiple times, it's downloaded once)
 - setup each the animation on the page
 - if the autoplay is `true`, the animation is started right away, otherwise the animation will play only when it's visible and paused when it exits the screen. This is achieved thanks to `IntersectionObserver`, with a visibility filter 0.01.
+- raise a document event `astro-lottie-loaded` when all animations are loaded and ready
+
+### Accessing the Lottie Player
+This plugin registers a `astroLottie` global object for the page.
+
+```ts
+const astroLottie = window.astroLottie;
+if (!astroLottie) {
+  // lottie is not registered! Either ...
+  // - no lottie animation is present on this page
+  // - lottie library failed to load  
+} else {
+  const player = astroLottie.getAnimation("my-animation");
+  player.play();
+}
+```
+
+The `AstroLottie` has two features:
+- getting a specific animation by a key
+- getting all animations present in the page
+
+The full specification is:
+```ts
+export type AstroLottie = {
+    /**
+     * Get a LottieAnimation by the configured id
+     */
+    getAnimation(id: string): LottieAnimation | undefined
+
+    /**
+     * Get a LottieAnimation from the hosting element container
+     */
+    getAnimation(from: { container: HTMLElement }): LottieAnimation | undefined
+
+    /**
+     * Get a LottieAnimation from the hosting element container
+     */
+    getAnimation(from: { elementId: string }): LottieAnimation | undefined
+
+    /**
+     * Get all the LottieAnimation for the current page
+     */
+    getAllAnimations(): LottieAnimation[]
+}
+```
+
+A `LottieAnimation` represents a single animation registered for the current page and is defined with:
+```ts
+export type LottieAnimation = Readonly<{
+    id: string                        // the specified id es: <Lottie id="my-animation" />
+    config: LottieAnimationConfig     // the full lottie configuration of the Lottie element
+    container: HTMLElement            // the hosting dom element container
+    isLoaded: boolean                 // specify if the animation is successfully loaded
+    player?: AnimationItem            // this is the real Lottie player. It's defined when isLoaded is true
+}>
+```
+
+The `player` property is the Lottie player, typed by the Lottie library itself. You can checkout [Lottie](https://github.com/airbnb/lottie-web#usage) repository for the documentation.
+
+
+For example if you need to start an animation on demand when a button is clicked.
+```ts
+document.querySelector("#play-button").addEventListener("click", () => {
+  const animation = astroLottie.getAnimation("my-animation");
+  if (animation && animation.isLoaded) {
+    animation.player.play();
+  }
+});
+```
+
+In typescript, you can have full type info of the `astroLottie` object with an environment reference. Create an `env.d.ts` or, if you already have one, add the following line:
+```ts
+/// <reference types="astro-integration-lottie/env" />
+```
 
 
 ## Reference
-### Lottie (component) Props
+### LottieAnimationConfig --> the Lottie component Props
 | property | type                  | usage    | description                              | 
 |:---------|:----------------------|:---------|:-----------------------------------------|
+| id       | `string`              | optional | used to access the relative lottie player via javascript |
 | src      | `string`              | required | the public path from where the animation will be downloaded |
 | player   | `"light"` \| `"full"`  | optional(`"light"`)    | which lottie player to load |
 | loop     | `boolean`             | optional(`true`)      | play the animation on loop |

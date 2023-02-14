@@ -3,9 +3,11 @@ import type { LottieAnimationConfig } from "./dist/index";
 
 export interface Props extends LottieAnimationConfig {}
 
-const { src, autoplay, loop } = Astro.props;
+const { id, src, player, autoplay, loop } = Astro.props;
 const lottieData = {
+    id,
     src,
+    player,
     autoplay,
     loop,
 };

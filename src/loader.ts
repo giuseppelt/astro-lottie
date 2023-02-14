@@ -1,11 +1,5 @@
 import type { AnimationItem } from "lottie-web";
-
-export interface LottieAnimationConfig {
-    src: string
-    player?: "light" | "full"
-    loop?: boolean
-    autoplay?: boolean | "visible"
-}
+import type { LottieAnimation, LottieAnimationConfig } from "./types";
 
 
 requestAnimationFrame(async () => {
@@ -43,9 +37,6 @@ requestAnimationFrame(async () => {
         return;
     }
 
-    //assign as global object
-    (window as any).lottie = lottie;
-
     // load animations
     const animationDataMap = new Map((await Promise.all(
         [...new Set(containers.map(([_, config]) => config.src))].map(async src => {
@@ -67,42 +58,70 @@ requestAnimationFrame(async () => {
 
 
     const animations = containers.map(([container, config]) => {
+        const id = config.id || `A${Math.random().toFixed(6).substring(2)}`;
+
         const animationData = animationDataMap.get(config.src);
-        if (!animationData) return;
+        let player: AnimationItem | undefined;
+        if (animationData) {
+            const { loop, autoplay } = config;
+            player = lottie.loadAnimation({
+                container,
+                loop,
+                autoplay: autoplay === "visible" ? false : autoplay,
+                animationData,
+                rendererSettings: {
+                    viewBoxOnly: true,
+                },
+            });
+        }
 
-        const { loop, autoplay } = config;
-        const player = lottie.loadAnimation({
+        return Object.freeze({
+            id,
+            config,
             container,
-            loop,
-            autoplay: autoplay === "visible" ? false : autoplay,
-            animationData,
-            rendererSettings: {
-                viewBoxOnly: true,
-            },
+            isLoaded: !!player,
+            player,
+        }) as LottieAnimation;
+    });
+
+
+    const toObserve = animations.filter(x => x.isLoaded && x.config.autoplay === "visible");
+    if (toObserve.length > 0) {
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(x => {
+                const animation = animations.find(y => y.container === x.target);
+                if (animation && animation.isLoaded) {
+                    if (x.isIntersecting) {
+                        animation.player.play();
+                    } else {
+                        animation.player.pause();
+                    }
+                }
+            });
+        }, { threshold: 0.01 });
+
+        toObserve.forEach(x => {
+            observer.observe(x.container);
         });
-
-        return [container, config, player] as const;
-    }).filter(x => !!x) as [HTMLElement, LottieAnimationConfig, AnimationItem][];
-
-    const toObserve = animations.filter(([, config]) => config.autoplay === "visible");
-    if (toObserve.length === 0) {
-        return;
     }
 
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(x => {
-            const animation = animations.find(([container]) => container === x.target);
-            if (animation) {
-                if (x.isIntersecting) {
-                    animation[2].play();
-                } else {
-                    animation[2].pause();
+    //assign as global object
+    window.lottie = lottie;
+    window.astroLottie = {
+        getAllAnimations() {
+            return animations.slice();
+        },
+        getAnimation(key) {
+            if (typeof key === "string") {
+                return animations.find(x => x.id === key);
+            } else if (typeof key === "object") {
+                if ("container" in key) {
+                    return animations.find(x => x.container === key.container);
+                } else if ("elementId" in key) {
+                    return animations.find(x => x.container.id === key.elementId);
                 }
             }
-        });
-    }, { threshold: 0.01 });
-
-    toObserve.forEach(([element]) => {
-        observer.observe(element);
-    });
+            throw new Error("Invalid LottieAnimation source: " + key)
+        },
+    };
 });
