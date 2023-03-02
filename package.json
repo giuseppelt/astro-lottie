@@ -33,7 +33,7 @@
   ],
   "devDependencies": {
     "@types/node": "^16.18.12",
-    "astro": "^1.9.2",
+    "astro": "^2.0.16",
     "lottie-web": "^5.10.2",
     "typescript": "5.0.1-rc"
   },
