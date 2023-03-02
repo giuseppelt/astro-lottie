@@ -4,13 +4,13 @@ specifiers:
   '@types/node': ^16.18.12
   astro: ^1.9.2
   lottie-web: ^5.10.2
-  typescript: ^4.9.5
+  typescript: 5.0.1-rc
 
 devDependencies:
   '@types/node': 16.18.12
   astro: 1.9.2_@types+node@16.18.12
   lottie-web: 5.10.2
-  typescript: 4.9.5
+  typescript: 5.0.1-rc
 
 packages:
 
@@ -3343,6 +3343,12 @@ packages:
 
   /typescript/4.9.5:
     resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
+    engines: {node: '>=4.2.0'}
+    hasBin: true
+    dev: true
+
+  /typescript/5.0.1-rc:
+    resolution: {integrity: sha512-zh75jY8gPo/y7fpmlTVN2bb2MigoLx4hGk+Cla9pY6lgSTvzJrmQQrRt5S80VTsEt6biWPZJgLK2nm6f0Ya+mA==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true

@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import type { AstroIntegration } from "astro";
-export * from "./types";
+export type * from "./types";
 
 export default function lottie(): AstroIntegration {
     return {
