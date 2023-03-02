@@ -4,6 +4,7 @@
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "moduleResolution": "node",
+        "skipLibCheck": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "module": "es2020",
