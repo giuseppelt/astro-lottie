@@ -1,6 +1,6 @@
 {
   "name": "astro-integration-lottie",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Use Lottie animations within your Astro website",
   "type": "module",
   "module": "./dist/index.js",

@@ -1,5 +1,8 @@
 # astro-lottie changelog
 
+## 0.2.2 Path release
+feat: new visibleThreshold config for auto playing
+
 ## 0.2.1 Path release
 fix: removed invalid exports
 
