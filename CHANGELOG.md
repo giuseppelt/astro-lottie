@@ -1,6 +1,9 @@
 # astro-lottie changelog
 
-## 0.2.2 Path release
+## 0.2.3 Patch release
+fix: pick all props in the astro component
+
+## 0.2.2 Patch release
 feat: new visibleThreshold config for auto playing
 
 ## 0.2.1 Path release
