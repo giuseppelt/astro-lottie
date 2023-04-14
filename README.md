@@ -154,6 +154,8 @@ document.addEventListener("astro-lottie-loaded", e => {
 | player   | `"light"` \| `"full"`  | optional(`"light"`)    | which lottie player to load |
 | loop     | `boolean`             | optional(`true`)      | play the animation on loop |
 | autoplay | `true` \| `"visible"` | optional(`"visible"`) | starts the animation as soon it loads or only when it's visible on the page |
+| visibleThreshold | `number` | optional(`0`) | Range[0-1] for the visibility to start the animation: 1 means 100% visible, 0 means that just 1px will make the animation play. When multiple animations on the same page use different thresholds, the minimum will be used for all |
+
 
 
 ## Types
