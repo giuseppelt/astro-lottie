@@ -7,6 +7,7 @@ export interface LottieAnimationConfig {
     player?: "light" | "full"
     loop?: boolean
     autoplay?: boolean | "visible"
+    visibleThreshold?: number
 }
 
 export type LottieAnimation = Readonly<{

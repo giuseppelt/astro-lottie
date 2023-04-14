@@ -8,6 +8,7 @@ setTimeout(async () => {
         player: "light",
         loop: true,
         autoplay: "visible",
+        visibleThreshold: 0,
     }
 
     const containers = [...document.querySelectorAll("[data-lottie]")].map(x => {
@@ -87,18 +88,20 @@ setTimeout(async () => {
 
     const toObserve = animations.filter(x => x.isLoaded && x.config.autoplay === "visible");
     if (toObserve.length > 0) {
+        // pick the min threshold as the common for all animations
+        const threshold = toObserve.reduce((r, x) => Math.max(0, Math.min(x.config.visibleThreshold || 0, r)), 1);
         const observer = new IntersectionObserver(entries => {
             entries.forEach(x => {
                 const animation = animations.find(y => y.container === x.target);
                 if (animation && animation.isLoaded) {
-                    if (x.isIntersecting) {
+                    if (x.isIntersecting && x.intersectionRatio >= threshold) {
                         animation.player.play();
                     } else {
                         animation.player.pause();
                     }
                 }
             });
-        }, { threshold: 0.01 });
+        }, { threshold });
 
         toObserve.forEach(x => {
             observer.observe(x.container);
