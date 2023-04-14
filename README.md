@@ -26,6 +26,14 @@ export default defineConfig({
 });
 ```
 
+### Type support
+This integration defines the `astroLottie` global object to interact with your animations inside a page. Details on the [dedicated section](#accessing-the-lottie-player). You can have full type info of the `astroLottie` object with an environment reference.
+
+Create an `env.d.ts` or, if you already have one, add the following line:
+```ts
+/// <reference types="astro-integration-lottie/env" />
+```
+
 ### Component
 Inside your astro page or component, you can import the Lottie component. It supports props autocompletion and type checking.
 ```astro
@@ -128,11 +136,6 @@ document.querySelector("#play-button").addEventListener("click", () => {
     animation.player.play();
   }
 });
-```
-
-In typescript, you can have full type info of the `astroLottie` object with an environment reference. Create an `env.d.ts` or, if you already have one, add the following line:
-```ts
-/// <reference types="astro-integration-lottie/env" />
 ```
 
 ### Animation ready event
