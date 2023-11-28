@@ -45,6 +45,23 @@ import LottieAnimation from "astro-integration-lottie/Lottie.astro";
 </div>
 ```
 
+### Styling, sizing and constraints
+You can use a parent `div` as a container to set the size and set additional styling (background, ...).
+
+You can either use the `style` attribute or reference a css `class`.
+```html
+<!-- with css class -->
+<div class="container">
+    <LottieAnimation src="assets/animation.json" autoplay="visible" />
+</div>
+
+
+<!-- or style -->
+<div style="width: 200px; height: 150px;">
+    <LottieAnimation src="assets/animation.json" autoplay="visible" />
+</div>
+```
+
 ## How `Astro Lottie` works
 ### Player loading
 The lottie player is not bundled within your page. It's asynchronously fetched only when a page contains at least one lottie animation.
