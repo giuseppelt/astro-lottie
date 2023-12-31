@@ -45,4 +45,15 @@ export type AstroLottie = {
      * Get all the LottieAnimation for the current page
      */
     getAllAnimations(): LottieAnimation[]
+
+    /**
+     * Get the current player mode
+     */
+    getPlayerMode(): "light" | "full"
+
+
+    /**
+     * Get the current observer
+     */
+    getObserver(): IntersectionObserver | undefined
 }

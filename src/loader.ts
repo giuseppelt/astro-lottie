@@ -1,30 +1,36 @@
-import type { AnimationItem } from "lottie-web";
+import type { AnimationItem, LottiePlayer } from "lottie-web";
 import type { LottieAnimation, LottieAnimationConfig } from "./types";
 
+type Container = [HTMLElement, LottieAnimationConfig]
 
-setTimeout(async () => {
+const DEFAULT: Partial<LottieAnimationConfig> = {
+    player: "light",
+    loop: true,
+    autoplay: "visible",
+    visibleThreshold: 0,
+}
 
-    const DEFAULT: Partial<LottieAnimationConfig> = {
-        player: "light",
-        loop: true,
-        autoplay: "visible",
-        visibleThreshold: 0,
-    }
+const getContainers = () => {
+    return[...document.querySelectorAll("[data-lottie]")]
+        .map(x => {
+            try {
+                return [x, { ...DEFAULT, ...JSON.parse(x.getAttribute("data-lottie-data") || "") }];
+            } catch (err) {
+                console.warn("Cannot parse lottie animation data", x);
+            }
+        })
+        .filter(x => !!x) as Container[]
+}
 
-    const containers = [...document.querySelectorAll("[data-lottie]")].map(x => {
-        try {
-            return [x, { ...DEFAULT, ...JSON.parse(x.getAttribute("data-lottie-data") || "") }];
-        } catch (err) {
-            console.warn("Cannot parse lottie animation data", x);
-        }
-    }).filter(x => !!x) as [HTMLElement, LottieAnimationConfig][];
-
-    if (containers.length === 0) {
-        // no lottie animation return
-        return;
-    }
-
+const loadLottie = async (containers: Container[]): Promise<{ lottie: undefined | LottiePlayer; playerMode: 'light' | 'full' }> => {
     const isFull = containers.some(([, config]) => config.player === "full");
+
+    const currentPlayerMode = window.astroLottie?.getPlayerMode();
+
+    if (currentPlayerMode === "full" || (currentPlayerMode === "light" && !isFull)) {
+        return { lottie: window.lottie, playerMode: currentPlayerMode };
+    }
+
     const lottie = await (isFull
         ? import("lottie-web")
         : import("lottie-web/build/player/lottie_light")
@@ -32,13 +38,14 @@ setTimeout(async () => {
         .then(x => x.default)
         .catch(err => {
             console.warn("Cannot load lottie-web script", err);
+
+            return undefined;
         });
 
-    if (!lottie) {
-        return;
-    }
+    return { lottie, playerMode: isFull ? "full" : "light" };
+}
 
-    // load animations
+const loadAnimations = async (containers: Container[], lottie: LottiePlayer) => {
     const animationDataMap = new Map((await Promise.all(
         [...new Set(containers.map(([_, config]) => config.src))].map(async src => {
             const response = await fetch(src).catch(() => { });
@@ -85,28 +92,56 @@ setTimeout(async () => {
         }) as LottieAnimation;
     });
 
+    return animations;
+}
 
+const initObserve = (animations: LottieAnimation[]) => {
     const toObserve = animations.filter(x => x.isLoaded && x.config.autoplay === "visible");
-    if (toObserve.length > 0) {
-        // pick the min threshold as the common for all animations
-        const threshold = toObserve.reduce((r, x) => Math.max(0, Math.min(x.config.visibleThreshold || 0, r)), 1);
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(x => {
-                const animation = animations.find(y => y.container === x.target);
-                if (animation && animation.isLoaded) {
-                    if (x.isIntersecting && x.intersectionRatio >= threshold) {
-                        animation.player.play();
-                    } else {
-                        animation.player.pause();
-                    }
-                }
-            });
-        }, { threshold });
+    if (!toObserve.length) return;
 
-        toObserve.forEach(x => {
-            observer.observe(x.container);
+    // pick the min threshold as the common for all animations
+    const threshold = toObserve.reduce((r, x) => Math.max(0, Math.min(x.config.visibleThreshold || 0, r)), 1);
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(x => {
+            const animation = animations.find(y => y.container === x.target);
+            if (animation && animation.isLoaded) {
+                if (x.isIntersecting && x.intersectionRatio >= threshold) {
+                    animation.player.play();
+                } else {
+                    animation.player.pause();
+                }
+            }
         });
+    }, { threshold });
+
+    toObserve.forEach(x => {
+        observer.observe(x.container);
+    });
+
+    return observer;
+}
+
+const initAstroLottie = async () => {
+    // disconnect previous observer
+    if (window.astroLottie?.getObserver()) {
+        window.astroLottie.getObserver()!.disconnect();
     }
+
+    const containers = getContainers();
+
+    if (!containers.length) {
+        return;
+    }
+
+    const { lottie, playerMode } = await loadLottie(containers);
+
+    if (!lottie) {
+        return;
+    }
+
+    const animations = await loadAnimations(containers, lottie);
+
+    const observer = initObserve(animations);
 
     //assign as global object
     window.lottie = lottie;
@@ -126,10 +161,22 @@ setTimeout(async () => {
             }
             throw new Error("Invalid LottieAnimation source: " + key)
         },
+        getObserver() {
+            return observer;
+        },
+        getPlayerMode() {
+            return playerMode;
+        }
     };
 
     // raise custom ready event
     document.dispatchEvent(new CustomEvent("astro-lottie-loaded", {
         detail: window.astroLottie!
     }));
+}
+
+setTimeout(() => {
+    initAstroLottie();
+
+    document.addEventListener('astro:after-swap', initAstroLottie);
 }, 0);
