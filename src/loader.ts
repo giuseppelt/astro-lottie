@@ -175,8 +175,4 @@ const initAstroLottie = async () => {
     }));
 }
 
-setTimeout(() => {
-    initAstroLottie();
-
-    document.addEventListener('astro:after-swap', initAstroLottie);
-}, 0);
+document.addEventListener('astro:page-load', initAstroLottie);
