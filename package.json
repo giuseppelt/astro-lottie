@@ -1,5 +1,5 @@
 {
-  "name": "astro-integration-lottie-cutuli",
+  "name": "astro-integration-lottie",
   "version": "0.2.3",
   "description": "Use Lottie animations within your Astro website",
   "type": "module",
@@ -24,7 +24,7 @@
   "bugs": "https://github.com/giuseppelt/astro-lottie/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/giuseppelt/astro-lottie.git"
+    "url": "https://github.com/giuseppecutuli/astro-lottie.git"
   },
   "devDependencies": {
     "@types/node": "^16.18.12",
