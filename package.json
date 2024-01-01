@@ -14,6 +14,12 @@
     "astro-component",
     "lottie"
   ],
+  "files": [
+    "dist",
+    "env.d.ts",
+    "package.json",
+    "Lottie.astro"
+  ],
   "author": {
     "name": "Giuseppe La Torre",
     "url": "https://github.com/giuseppelt"
