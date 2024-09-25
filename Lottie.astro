@@ -1,9 +1,13 @@
 ---
+import {AstroBuiltinAttributes} from "astro";
 import type { LottieAnimationConfig } from "./dist/index";
 
-export interface Props extends LottieAnimationConfig {}
+export interface Props extends LottieAnimationConfig {
+  class?: string;
+  'class:list'?: AstroBuiltinAttributes['class:list']
+}
 
-const { ...lottieData } = Astro.props;
+const { class: cssClass, classList: cssClassList, ...lottieData } = Astro.props;
 ---
 
-<div data-lottie data-lottie-data={JSON.stringify(lottieData)}></div>
+<div data-lottie data-lottie-data={JSON.stringify(lottieData)} class:list={[cssClass, ...cssClassList]} />
