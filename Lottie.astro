@@ -10,4 +10,4 @@ export interface Props extends LottieAnimationConfig {
 const { class: cssClass, classList: cssClassList, ...lottieData } = Astro.props;
 ---
 
-<div data-lottie data-lottie-data={JSON.stringify(lottieData)} class:list={[cssClass, ...cssClassList]} />
+<div data-lottie data-lottie-data={JSON.stringify(lottieData)} class:list={[cssClass, ...(cssClassList || [])]} />
