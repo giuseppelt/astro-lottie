@@ -1,5 +1,8 @@
 # astro-lottie changelog
 
+## 0.3.1 Patch release
+feat: allow to add css class names to the component (#13)
+
 ## 0.3.0 Feature release
 feat: support for astro transitions
 
