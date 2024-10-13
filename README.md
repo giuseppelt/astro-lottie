@@ -62,6 +62,17 @@ You can either use the `style` attribute or reference a css `class`.
 </div>
 ```
 
+Also, you can use the `class` or `class:list` attribute to add custom css classes directly to the lottie container.
+
+```jsx
+<LottieAnimation src="assets/animation.json" autoplay="visible" class="my-class my-other-class" />
+
+<!-- or -->
+
+<LottieAnimation src="assets/animation.json" autoplay="visible" class:list={["my-class", "my-other-class"]} />
+```
+
+
 ## How `Astro Lottie` works
 ### Player loading
 The lottie player is not bundled within your page. It's asynchronously fetched only when a page contains at least one lottie animation.
