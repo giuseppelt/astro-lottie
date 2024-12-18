@@ -1,5 +1,8 @@
 # astro-lottie changelog
 
+## 0.3.2 Patch release
+fix: add main field in package.json (#15)
+
 ## 0.3.1 Patch release
 feat: allow to add css class names to the component (#13)
 
